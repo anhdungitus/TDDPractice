@@ -12,7 +12,7 @@ namespace Tests
         [Test]
         public void Wait_NoPulse_ReturnsFalse()
         {
-            UpdateableSpin spin = new UpdateableSpin();
+            var spin = new UpdateableSpin();
             bool wasPulsed = spin.Wait(TimeSpan.FromMilliseconds(10));
             Assert.IsFalse(wasPulsed);
         }
