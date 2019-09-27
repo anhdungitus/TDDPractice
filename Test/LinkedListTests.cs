@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using System.Collections.Generic;
 
 namespace Test
 {
@@ -41,7 +41,7 @@ namespace Test
             myLinkedList.AddFirst(1);
             myLinkedList.AddLast(2);
             myLinkedList.AddLast(4);
-            myLinkedList.AddAfter( myLinkedList.GetHead().Next, 3);
+            myLinkedList.AddAfter(myLinkedList.GetHead().Next, 3);
             myLinkedList.GetHead().Next.Next.Data.Should().Be(3);
         }
 
