@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -19,7 +20,7 @@ namespace Test
         public void Can_Add_First()
         {
             var myLinkedList = new MyLinkedList<int>();
-            myLinkedList.AddFirst(new ListNode<int>(1));
+            myLinkedList.AddFirst(1);
             myLinkedList.GetHead().Data.Should().Be(1);
         }
 
@@ -27,9 +28,47 @@ namespace Test
         public void Can_Add_Last()
         {
             var myLinkedList = new MyLinkedList<int>();
-            myLinkedList.AddLast(new ListNode<int>(1));
-            myLinkedList.GetLast().Data.Should().Be(1);
-            myLinkedList.GetLast().Next.Should().Be(null);
+            myLinkedList.AddLast(1);
+            myLinkedList.AddLast(2);
+            myLinkedList.AddFirst(3);
+            myLinkedList.GetLast().Data.Should().Be(2);
+        }
+
+        [Test]
+        public void Can_Add_After()
+        {
+            var myLinkedList = new MyLinkedList<int>();
+            myLinkedList.AddFirst(1);
+            myLinkedList.AddLast(2);
+            myLinkedList.AddLast(4);
+            myLinkedList.AddAfter( myLinkedList.GetHead().Next, 3);
+            myLinkedList.GetHead().Next.Next.Data.Should().Be(3);
+        }
+
+        [Test]
+        public void Can_Add_Before()
+        {
+            var myLinkedList = new MyLinkedList<int>();
+            myLinkedList.AddFirst(1);
+            myLinkedList.AddLast(3);
+            myLinkedList.AddLast(4);
+            myLinkedList.AddBefore(myLinkedList.GetHead().Next, 2);
+            myLinkedList.GetHead().Next.Data.Should().Be(2);
+        }
+
+        [Test]
+        public void Can_Travel_All()
+        {
+            var myLinkedList = new MyLinkedList<int>();
+            myLinkedList.AddFirst(1);
+            myLinkedList.AddLast(2);
+            myLinkedList.AddLast(3);
+
+            var list = myLinkedList.ToList();
+            list[0].Should().Be(1);
+            list[1].Should().Be(2);
+            list[2].Should().Be(3);
+            list.Count.Should().Be(3);
         }
     }
 
@@ -49,10 +88,13 @@ namespace Test
     {
         private ListNode<T> _head;
 
-        public void AddFirst(ListNode<T> listNode)
+        public void AddFirst(T value)
         {
-            listNode.Next = _head;
-            _head = listNode;
+            var node = new ListNode<T>(value)
+            {
+                Next = _head
+            };
+            _head = node;
         }
 
         public ListNode<T> GetHead()
@@ -60,12 +102,13 @@ namespace Test
             return _head;
         }
 
-        public void AddLast(ListNode<T> listNode)
+        public void AddLast(T value)
         {
+            var node = new ListNode<T>(value);
             var p = _head;
             if (p == null)
             {
-                _head = listNode;
+                _head = node;
                 return;
             }
 
@@ -74,7 +117,7 @@ namespace Test
                 p = p.Next;
             }
 
-            p.Next = listNode;
+            p.Next = node;
         }
 
         public ListNode<T> GetLast()
@@ -91,6 +134,45 @@ namespace Test
             }
 
             return p;
+        }
+
+        public void AddAfter(ListNode<T> node, T value)
+        {
+            var newNode = new ListNode<T>(value)
+            {
+                Next = node.Next
+            };
+            node.Next = newNode;
+        }
+
+        public void AddBefore(ListNode<T> node, T value)
+        {
+            var p = _head;
+            while (p.Next != null)
+            {
+                if (p.Next == node)
+                {
+                    var newNode = new ListNode<T>(value);
+                    p.Next = newNode;
+                    newNode.Next = node;
+                    break;
+                }
+
+                p = p.Next;
+            }
+        }
+
+        public List<T> ToList()
+        {
+            var result = new List<T>();
+            var p = _head;
+            while (p != null)
+            {
+                result.Add(p.Data);
+                p = p.Next;
+            }
+
+            return result;
         }
     }
 }
